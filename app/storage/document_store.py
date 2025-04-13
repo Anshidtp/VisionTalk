@@ -152,7 +152,7 @@ class DocumentStore:
     
     def _save_metadata(self, document_id: str, metadata: Dict[str, Any]) -> None:
         """Save document metadata."""
-        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.json")
+        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.md")
         
         try:
             with open(metadata_file, "w") as f:
@@ -162,7 +162,7 @@ class DocumentStore:
     
     def _get_metadata(self, document_id: str) -> Optional[Dict[str, Any]]:
         """Get document metadata."""
-        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.json")
+        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.md")
         
         if not os.path.exists(metadata_file):
             return None

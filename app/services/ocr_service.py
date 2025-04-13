@@ -76,7 +76,7 @@ class OCRService:
     
     def get_combined_markdown(self, ocr_response: OCRResponse) -> str:
         """Combine markdown from all pages with their respective images."""
-        markdowns = []
+        markdowns = list[str] = []
         for page in ocr_response.pages:
             image_data = {}
             for img in page.images:

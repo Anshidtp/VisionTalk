@@ -9,6 +9,7 @@ from mistralai import DocumentURLChunk, ImageURLChunk
 from mistralai.models import OCRResponse
 from dotenv import find_dotenv, load_dotenv
 import google.generativeai as genai
+load_dotenv()
 
 api_key = os.getenv("MISTRAL_API_KEY", "")
 google_api_key = os.getenv("GOOGLE_API_KEY", "")
