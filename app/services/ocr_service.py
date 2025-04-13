@@ -10,7 +10,7 @@ from app.core.exceptions import ServiceError
 
 logger = logging.getLogger(__name__)
 
-class MistralService:
+class OCRService:
     """Service for interacting with Mistral API."""
     
     def __init__(self, api_key: str):

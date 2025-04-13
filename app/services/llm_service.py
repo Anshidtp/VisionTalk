@@ -4,7 +4,7 @@ from app.core.exceptions import ServiceError
 
 logger = logging.getLogger(__name__)
 
-class GeminiService:
+class LLMService:
     """Service for interacting with Google's Gemini API."""
     
     def __init__(self, api_key: str):
