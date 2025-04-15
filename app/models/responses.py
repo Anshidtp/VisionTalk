@@ -25,6 +25,11 @@ class OCRResponse(BaseModel):
     pages: Optional[List[PageContent]] = Field(None, description="Content by page")
     error: Optional[str] = Field(None, description="Error message if processing failed")
 
+    class Config:
+        """Pydantic model configuration."""
+        json_encoders = {}
+        arbitrary_types_allowed = True
+
 class ChatResponse(BaseModel):
     """Response model for chat operations."""
     document_id: str = Field(..., description="Document ID")

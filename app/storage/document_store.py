@@ -152,17 +152,38 @@ class DocumentStore:
     
     def _save_metadata(self, document_id: str, metadata: Dict[str, Any]) -> None:
         """Save document metadata."""
-        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.md")
+        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.json")
+        
+        # Convert metadata to JSON-serializable format
+        serializable_metadata = self._make_serializable(metadata)
         
         try:
             with open(metadata_file, "w") as f:
-                json.dump(metadata, f, indent=2)
+                json.dump(serializable_metadata, f, indent=2)
         except Exception as e:
             logger.error(f"Error saving metadata: {str(e)}")
+
+    def _make_serializable(self, obj):
+        """Convert object to JSON serializable format."""
+        if hasattr(obj, "__dict__"):
+            # Convert custom objects to dictionaries
+            return {k: self._make_serializable(v) for k, v in obj.__dict__.items()}
+        elif isinstance(obj, dict):
+            # Process each value in the dictionary
+            return {k: self._make_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            # Process each item in the list
+            return [self._make_serializable(i) for i in obj]
+        elif hasattr(obj, "to_dict") and callable(getattr(obj, "to_dict")):
+            # Use to_dict method if available
+            return self._make_serializable(obj.to_dict())
+        else:
+            # Return the object as is if it's likely JSON serializable
+            return obj
     
     def _get_metadata(self, document_id: str) -> Optional[Dict[str, Any]]:
         """Get document metadata."""
-        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.md")
+        metadata_file = os.path.join(self.metadata_dir, f"{document_id}.json")
         
         if not os.path.exists(metadata_file):
             return None
