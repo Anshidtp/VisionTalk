@@ -14,6 +14,7 @@ export function DocumentProvider({ children }) {
   const [currentDocument, setCurrentDocument] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   // Load documents from localStorage on mount
   useEffect(() => {
@@ -39,11 +40,10 @@ export function DocumentProvider({ children }) {
    * Upload a file for OCR processing
    */
   const uploadDocument = async (file) => {
-    setLoading(true);
+    setUploadLoading(true);
     try {
       const response = await documentService.uploadDocument(file);
       
-      // Add to documents list
       const newDoc = {
         id: response.document_id,
         filename: response.filename,
@@ -54,15 +54,16 @@ export function DocumentProvider({ children }) {
       setDocuments(prev => [newDoc, ...prev]);
       toast.success('Document uploaded successfully');
       
-      // Navigate to document view
+      // Add a small delay before navigation
+      setCurrentDocument(response);
       navigate(`/documents/${response.document_id}`);
+      
       return response;
     } catch (error) {
-      console.error('Error uploading document:', error);
       toast.error('Failed to upload document');
       throw error;
     } finally {
-      setLoading(false);
+      setUploadLoading(false);
     }
   };
 
@@ -105,22 +106,12 @@ export function DocumentProvider({ children }) {
   const getDocument = async (documentId) => {
     setLoading(true);
     try {
-      const documentData = await documentService.getDocument(documentId);
-      setCurrentDocument(documentData);
-      
-      // Update status in documents list
-      setDocuments(prev => 
-        prev.map(doc => 
-          doc.id === documentId 
-            ? { ...doc, status: documentData.status } 
-            : doc
-        )
-      );
-      
-      return documentData;
+      const doc = await documentService.getDocument(documentId);
+      setCurrentDocument(doc);
+      return doc;
     } catch (error) {
-      console.error('Error fetching document:', error);
-      toast.error('Failed to load document');
+      const message = error.message || 'Failed to fetch document';
+      toast.error(message);
       throw error;
     } finally {
       setLoading(false);
@@ -148,6 +139,7 @@ export function DocumentProvider({ children }) {
     documents,
     currentDocument,
     loading,
+    uploadLoading,
     uploadDocument,
     processDocumentUrl,
     getDocument,

@@ -4,12 +4,11 @@ import { FaUpload, FaSpinner, FaFilePdf, FaFileImage } from 'react-icons/fa';
 import { useDocument } from '@context/DocumentContext';
 
 const FileUpload = () => {
-  const { uploadDocument, loading } = useDocument();
   const [file, setFile] = useState(null);
+  const { uploadDocument, uploadLoading } = useDocument();
 
   const onDrop = useCallback((acceptedFiles) => {
-    // Only take the first file if multiple are dropped
-    if (acceptedFiles.length > 0) {
+    if (acceptedFiles?.length > 0) {
       setFile(acceptedFiles[0]);
     }
   }, []);
@@ -30,9 +29,9 @@ const FileUpload = () => {
     
     try {
       await uploadDocument(file);
-      setFile(null); // Reset file after upload
+      setFile(null); // Reset file after successful upload
     } catch (error) {
-      // Error is handled in the context
+      console.error('Upload failed:', error);
     }
   };
 
@@ -49,7 +48,7 @@ const FileUpload = () => {
   };
 
   return (
-    <div className="card">
+    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
       <h2 className="text-xl font-semibold mb-4">Upload Document</h2>
       
       <div 
@@ -85,9 +84,9 @@ const FileUpload = () => {
       <button
         className="btn btn-primary w-full flex justify-center items-center"
         onClick={handleUpload}
-        disabled={!file || loading}
+        disabled={!file || uploadLoading}
       >
-        {loading ? (
+        {uploadLoading ? (
           <>
             <FaSpinner className="animate-spin mr-2" />
             Uploading...

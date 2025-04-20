@@ -10,16 +10,11 @@ const DocumentView = () => {
   const [activeTab, setActiveTab] = useState('text');
   
   useEffect(() => {
-    const fetchDocument = async () => {
-      try {
-        await getDocument(documentId);
-      } catch (error) {
-        // Error handled in context
-      }
-    };
-    
-    fetchDocument();
-  }, [documentId, getDocument]);
+    // Only fetch if we don't have the document or it's a different one
+    if (!currentDocument || currentDocument.id !== documentId) {
+      getDocument(documentId);
+    }
+  }, [documentId]);
   
   const handleChatWithDocument = () => {
     navigate(`/chat/${documentId}`);
